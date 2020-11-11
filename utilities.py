@@ -8,8 +8,8 @@ def calculate_l(s):
     return l
 
 def calculate_s(l):
-    s = np.array()
+    s = np.array([])
     for i in range(l.size - 1):
-        s.append(l[i+1] / l[i])
+        np.append(s, l[i+1] / l[i])
 
     return s
