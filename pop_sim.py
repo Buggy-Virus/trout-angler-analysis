@@ -10,6 +10,7 @@ class pop_sim:
         self.n_list = [n]
         self.a = a
         self.b = b
+        self.growth_list = []
 
         if angler_rule > 2:
             raise Exception(f"Not a valid angler_rule: {angler_rule}")
@@ -25,8 +26,8 @@ class pop_sim:
         s_new = np.copy(s)
         affected_total = np.sum(n[b:])
 
-        for i in range(b, s.size):
-            s_new[i] = (n[i] * s[i] - a * n[i] / affected_total) / n[i]
+        for i in range(b, s.size):           
+            s_new[i] = (n[i][0] * s[i] - a * n[i][0] / affected_total) / n[i][0]
 
         return s_new
         
@@ -46,7 +47,11 @@ class pop_sim:
 
         cur_leslie = np.diag(effective_s)
         cur_leslie = np.append(cur_leslie, np.zeros((np.size(cur_leslie,0), 1)), axis=1)
-        cur_leslie = np.append(self.f, cur_leslie, axis = 0)
+        cur_leslie = np.append(self.f.reshape(1, self.f.size), cur_leslie, axis = 0)
+
+        eigenvalues, _ = np.linalg.eig(cur_leslie)
+        growth = eigenvalues[np.argmax(np.absolute(eigenvalues))]
+        self.growth_list.append(growth)
 
         new_n = np.matmul(cur_leslie, self.n)
         self.n_list.append(new_n)
